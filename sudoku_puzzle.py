@@ -31,11 +31,11 @@ class sudoku_puzzle:
         for row in self.puzzle:
             print(row)
 
-    def get_row(self, row_number):
-        return self.puzzle[row_number]
+    def get_row(self, y_pos):
+        return self.puzzle[y_pos]
 
-    def get_column(self, column_number):
-        return [row[column_number] for row in self.puzzle]
+    def get_column(self, x_pos):
+        return [row[x_pos] for row in self.puzzle]
 
     def get_square(self, x_pos, y_pos):
         square_x_pos = x_pos // 3
@@ -55,6 +55,16 @@ class sudoku_puzzle:
             return False
         return True
 
+    def get_possible_numbers(self, x_pos, y_pos):
+        pos_numbers = [i for i in range(1,10)]
+        row = self.get_row(y_pos)
+        col = self.get_column(x_pos)
+        square = [i for arr in self.get_square(x_pos,y_pos) for i in arr]
+        for num in range(1,10):
+            if num in (row + col + square):
+                pos_numbers.remove(num)
+        return pos_numbers
+
     def get_next_open_slot(self, x_pos, y_pos):
         for x in range(x_pos, 9):
             if (self.puzzle[y_pos][x] == 0):
@@ -70,3 +80,13 @@ class sudoku_puzzle:
 if __name__ == "__main__":
     puzzle = sudoku_puzzle()
     puzzle.print_puzzle()
+    # print(puzzle.get_possible_numbers(0, 0))
+    x = 0
+    y = 0
+    while (puzzle.get_next_open_slot(x, y)):
+        x_pos = puzzle.get_next_open_slot(x, y)["x"]
+        y_pos = puzzle.get_next_open_slot(x, y)["y"]
+        print(puzzle.get_possible_numbers(x_pos, y_pos))
+        x = x_pos
+        y = y_pos
+
