@@ -1,5 +1,5 @@
 
-name: Unit tests
+name: Tests
 
 on: [push]
 
