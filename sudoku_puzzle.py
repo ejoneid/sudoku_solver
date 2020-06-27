@@ -1,5 +1,6 @@
 import itertools
 import sys
+import time
 
 sys.setrecursionlimit(1000000000)
 
@@ -117,33 +118,6 @@ class sudoku_puzzle:
             if 0 in row:
                 return False
         return True
-    
-
-    def solve_with_backtracking(self):
-
-        moves = []
-        def move_and_place(self, x_pos, y_pos, atempt_nr):
-            self.assign_number(x_pos, y_pos, 0)
-            if (atempt_nr >= len(self.get_possible_numbers(x_pos, y_pos))):
-                move = moves.pop()
-                move_and_place(self, move["x"], move["y"], move["atempts"])
-            else:
-                num_to_try = self.get_possible_numbers(x_pos, y_pos)[atempt_nr]
-                self.assign_number(x_pos, y_pos, num_to_try)
-                moves.append({"x": x_pos, "y": y_pos, "atempts": atempt_nr + 1})
-
-                next_move = self.get_next_open_slot(x_pos, y_pos)
-                if (not next_move):
-                    return
-                
-                possibilities_on_next_move = self.get_possible_numbers(next_move["x"], next_move["y"])
-                if (possibilities_on_next_move):
-                    move_and_place(self, next_move["x"], next_move["y"], 0)
-                else:
-                    move = moves.pop()
-                    move_and_place(self, move["x"], move["y"], move["atempts"])
-        
-        move_and_place(self, 0, 0, 0)
 
 
     # exceeds recursion limit
@@ -208,6 +182,11 @@ class sudoku_puzzle:
 if __name__ == "__main__":
     puzzle = sudoku_puzzle(example_puzzle)
     puzzle.print_puzzle()
+
+    start_time = time.time()
     puzzle.solve()
+    time_used = time.time() -start_time
+
     puzzle.print_puzzle()
+    print(f'Solving time: {time_used}')
     
