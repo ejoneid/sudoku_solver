@@ -29,7 +29,7 @@ class TestSudoku(unittest.TestCase):
         ]
         
         puzzle = sudoku_puzzle.sudoku_puzzle(puzzle=testPuzzle)
-        self.assertEqual(solvedPuzzle, puzzle.solve_with_backtracking())
+        self.assertEqual(solvedPuzzle, puzzle.solve())
 
 
         testPuzzle2 = [
@@ -56,7 +56,7 @@ class TestSudoku(unittest.TestCase):
         ]
 
         puzzle = sudoku_puzzle.sudoku_puzzle(puzzle=testPuzzle2)
-        self.assertEqual(solvedPuzzle2, puzzle.solve_with_backtracking())
+        self.assertEqual(solvedPuzzle2, puzzle.solve())
         
 
 

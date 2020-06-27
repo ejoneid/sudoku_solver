@@ -1,7 +1,7 @@
 import itertools
 import sys
 
-sys.setrecursionlimit(1000000)
+sys.setrecursionlimit(1000000000)
 
 empty_puzzle = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -38,6 +38,7 @@ class sudoku_puzzle:
         self.y_pos = 0
 
 
+    # unfinished
     @staticmethod
     def gen_puzzle():
         return [
@@ -95,7 +96,7 @@ class sudoku_puzzle:
         col = self.get_column(x_pos)
         square = [i for arr in self.get_square(x_pos,y_pos) for i in arr]
         for num in range(1,10):
-            if num in (row + col + square):
+            if (num in row) or (num in col) or (num in square):
                 pos_numbers.remove(num)
         return pos_numbers
 
@@ -145,31 +146,68 @@ class sudoku_puzzle:
         move_and_place(self, 0, 0, 0)
 
 
-    # unfinished
-    def solve(self):
-        while (not self.is_solved()):
-            x = 0
-            y = 0
-            while (self.get_next_open_slot(x, y)):
-                x_pos = self.get_next_open_slot(x, y)["x"]
-                y_pos = self.get_next_open_slot(x, y)["y"]
+    # exceeds recursion limit
+    def solve_with_recursion(self):
 
-                pos_num = self.get_possible_numbers(x_pos, y_pos)
-                if (len(pos_num) == 1):
-                    puzzle.assign_number(x_pos, y_pos, pos_num[0])
-                
-                if (x == 8):
-                    x = 0
-                    y = y_pos + 1
+        def get_next_number(current_number, possible_numbers):
+            for num in possible_numbers:
+                if (num > current_number):
+                    return num
+            return 0
+
+        backMoves = []
+        def move_and_place(self, x_pos, y_pos):
+            next_number = get_next_number(self.puzzle[y_pos][x_pos], self.get_possible_numbers(x_pos, y_pos))
+            self.assign_number(x_pos, y_pos, next_number)
+            if not (self.is_solved()):
+                self.print_puzzle()
+                if (next_number == 0):
+                    next_pos = backMoves.pop()
+                    move_and_place(self, next_pos['x'], next_pos['y'] )
                 else:
-                    x = x_pos + 1
-                    y = y_pos
+                    backMoves.append({"x": x_pos, "y": y_pos})
+                    next_pos = self.get_next_open_slot(x_pos, y_pos)
+                    move_and_place(self, next_pos['x'], next_pos['y'] )
+        
+        start_pos = self.get_next_open_slot(0, 0)
+        move_and_place(self, start_pos['x'], start_pos['y'])
+
+
+    def solve(self):
+
+        def get_next_number(current_number, possible_numbers):
+            for num in possible_numbers:
+                if (num > current_number):
+                    return num
+            return 0
+
+        current_pos = {"x": 0, "y": 0}
+        backMoves = []
+
+        # solves issue where the first number in puzzle is 0
+        if (self.puzzle[current_pos['y']][current_pos['x']] == 0):
+            next_number = get_next_number(self.puzzle[current_pos['y']][current_pos['x']], self.get_possible_numbers(current_pos['x'], current_pos['y']))
+            self.assign_number(current_pos['x'], current_pos['y'], next_number)
+            backMoves.append(current_pos)
+
+        while not self.is_solved():
+            if (self.puzzle[current_pos['y']][current_pos['x']] == 0):
+                current_pos = backMoves.pop()
+            else:
+                current_pos = self.get_next_open_slot(current_pos['x'], current_pos['y'])
+            
+            next_number = get_next_number(self.puzzle[current_pos['y']][current_pos['x']], self.get_possible_numbers(current_pos['x'], current_pos['y']))
+            self.assign_number(current_pos['x'], current_pos['y'], next_number)
+            if (next_number != 0):
+                backMoves.append(current_pos)
+
+        return self.puzzle
 
 
 
 if __name__ == "__main__":
     puzzle = sudoku_puzzle(example_puzzle)
     puzzle.print_puzzle()
-    puzzle.solve_with_backtracking()
+    puzzle.solve()
     puzzle.print_puzzle()
     
