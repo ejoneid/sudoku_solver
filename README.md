@@ -3,7 +3,7 @@ This is a sudoku solver for 9x9 puzzles.
 
 ## Usage
 ```python
-import sudoku_solver
+from sudoku_solver import sudoku_solver
 
 examplePuzzle = [
     [5, 8, 6, 0, 7, 0, 0, 0, 0],
@@ -17,6 +17,6 @@ examplePuzzle = [
     [0, 0, 0, 0, 2, 0, 4, 7, 0]
 ]
 
-puzzleObject = sudoku_puzzle.sudoku_puzzle(puzzle=examplePuzzle)
+puzzleObject = sudoku_puzzle(puzzle=examplePuzzle)
 puzzleObject.solve()
 ```
